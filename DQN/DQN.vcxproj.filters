@@ -13,5 +13,69 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="NN Structure">
+      <UniqueIdentifier>{92a65db0-7e2c-4b4e-a1c5-29d48bf8a58f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NN Structure\Node">
+      <UniqueIdentifier>{44180835-217f-4b46-b4eb-1048947a22cd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NN Structure\Neural Network">
+      <UniqueIdentifier>{daf67c69-f9d0-4c30-bae2-80388c98f4a8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NN Structure\Layer">
+      <UniqueIdentifier>{7c0d3a85-d9a8-4d99-8c48-d5b34f400529}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NN Structure\Layer\Layer Types">
+      <UniqueIdentifier>{d3346f5a-1c5a-4d6c-a98f-2f4778ef1ae7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NN Structure\Layer\Layer Types\LeakyReLU">
+      <UniqueIdentifier>{8da93a06-e991-4f3f-aa59-cd0985dc6599}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NN Structure\Layer\Layer Types\ReLU">
+      <UniqueIdentifier>{4ccb0483-ea58-4108-8976-8e43994a9349}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NN Structure\Layer\Layer Types\Linear">
+      <UniqueIdentifier>{a530bbbb-8f05-41d7-9d36-e2371dd75e4b}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="Node.cpp">
+      <Filter>NN Structure\Node</Filter>
+    </ClCompile>
+    <ClCompile Include="NeuralNetwork.cpp">
+      <Filter>NN Structure\Neural Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Linear.cpp">
+      <Filter>NN Structure\Layer\Layer Types\Linear</Filter>
+    </ClCompile>
+    <ClCompile Include="LeakyReLU.cpp">
+      <Filter>NN Structure\Layer\Layer Types\LeakyReLU</Filter>
+    </ClCompile>
+    <ClCompile Include="ReLU.cpp">
+      <Filter>NN Structure\Layer\Layer Types\ReLU</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Node.h">
+      <Filter>NN Structure\Node</Filter>
+    </ClInclude>
+    <ClInclude Include="NeuralNetwork.h">
+      <Filter>NN Structure\Neural Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Layer.h">
+      <Filter>NN Structure\Layer</Filter>
+    </ClInclude>
+    <ClInclude Include="Linear.h">
+      <Filter>NN Structure\Layer\Layer Types\Linear</Filter>
+    </ClInclude>
+    <ClInclude Include="LeakyReLU.h">
+      <Filter>NN Structure\Layer\Layer Types\LeakyReLU</Filter>
+    </ClInclude>
+    <ClInclude Include="ReLU.h">
+      <Filter>NN Structure\Layer\Layer Types\ReLU</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
