@@ -9,10 +9,12 @@ private:
 	float nodesBias = 0.0f;
 	bool firstLayer = false;
 
-	float alpha = 0.01;
+	char* weightInitType;
+
+	float koef = 0.01;
 
 public:
-	LeakyReLU(int prevNodesNumber, int curNodesNumber, float alpha = 0.01);
+	LeakyReLU(int prevNodesNumber, int curNodesNumber, char* weightInitType, float koef);
 	~LeakyReLU();
 	char* getLayerType() override;
 

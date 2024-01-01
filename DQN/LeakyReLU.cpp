@@ -1,16 +1,20 @@
 #include "LeakyReLU.h"
 
-LeakyReLU::LeakyReLU(int prevNodesNumber, int curNodesNumber, float alpha)
+LeakyReLU::LeakyReLU(int prevNodesNumber, int curNodesNumber, char* weightInitType, float koef)
 {
-	this->alpha = alpha;
+	this->koef = koef;
+	this->weightInitType = weightInitType;
 	nodesNumber = curNodesNumber;
 	nodesList = new Node * [curNodesNumber];
 	if (prevNodesNumber != 0)
 	{
-		for (int i = 0; i < curNodesNumber; i++)
+		if (memcmp(this->weightInitType, new char[9] {'H', 'e', 'N', 'o', 'r', 'm', 'a', 'l', '\0'}, sizeof(this->weightInitType)) == 0)
 		{
-			nodesList[i] = new Node(prevNodesNumber);
-			nodesList[i]->Weight_HeNormal_Init();
+			for (int i = 0; i < curNodesNumber; i++)
+			{
+				nodesList[i] = new Node(prevNodesNumber);
+				nodesList[i]->Weight_HeNormal_Init();
+			}
 		}
 	}
 	else
@@ -59,7 +63,7 @@ void LeakyReLU::executeLayerFunction()
 	{
 		if (nodesList[i]->getNodeValue() < 0)
 		{
-			nodesList[i]->setNodeValue((float)nodesList[i]->getNodeValue() * this->alpha);
+			nodesList[i]->setNodeValue((float)nodesList[i]->getNodeValue() * this->koef);
 		}
 	}
 }

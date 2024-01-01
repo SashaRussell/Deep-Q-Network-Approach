@@ -9,8 +9,10 @@ private:
 	float nodesBias = 0.0f;
 	bool firstLayer = false;
 
+	char* weightInitType;
+
 public:
-	Linear(int prevNodesNumber, int curNodesNumber);
+	Linear(int prevNodesNumber, int curNodesNumber, char* weightInitType);
 	~Linear();
 	char* getLayerType() override;
 

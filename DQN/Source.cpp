@@ -1,13 +1,43 @@
 #include <iostream>
 #include "NeuralNetwork.h"
-#include "LeakyReLU.h"
-
-
 
 void main()
 {
 
 	std::cout << "hello world!\n\n";
+
+	///
+
+	NeuralNetwork myNN;
+
+	myNN.AddLinearLayer(0, 5);
+	myNN.AddReLULayer(5, 5);
+	myNN.AddLeakyReLULayer(5, 5);
+
+	Layer* myLayer = myNN.getLayerAt(2);
+
+	/*myLayer->*/
+
+	Node* myNode = myLayer->getNodeAt(4);
+
+
+	if (myLayer != nullptr)
+	{
+
+		std::cout << "True! ";
+		myNode->setNodeValue(10);
+		std::cout << "Value = " << myNode->getNodeValue(); // checker
+
+		std::cout << "\n\n";
+	}
+	else
+	{
+		std::cout << "False!\n\n";
+	};
+
+	//////
+
+
 	/*Layer* ll = new LeakyReLU(4,8);
 	Node** nodes = ll->getNodesList();
 
@@ -62,39 +92,39 @@ void main()
 		std::cout << "\n\n";
 	}*/
 
-	/////////////
-
-	//Node** ns = new Node*[10];
-	//for(int )
-	//int prevLayer = 10;
-	//Node* n = new Node(prevLayer);
-	//n->Weight_HeNormal_Init();
-	////float val = ;
-	//for (int i = 0; i < 10; i++)
-	//{
-	//	//n->setNodeValue(i, 0.22222);
-	//	std::cout << (float) n->getWeightValueAt(i) << "\n";
-	//}
-
-	//float sum = 0;
-	//for (int i = 0; i < 10; i++)
-	//{
-	//	sum = (float) sum + n->getWeightValueAt(i);
-	//}
-	//n->setNodeValue(sum);
-	//std::cout << "\n\n" << (float)n->getNodeValue() << "\n";
-
-	//n->setNode(0, 0.222);
-	//std::cout << (float)n->getNode(0) << "\n";
-
 	///
+
+	/*Node** ns = new Node*[10];
+	for(int )
+	int prevLayer = 10;
+	Node* n = new Node(prevLayer);
+	n->Weight_HeNormal_Init();
+	float val = ;
+	for (int i = 0; i < 10; i++)
+	{
+		n->setNodeValue(i, 0.22222);
+		std::cout << (float) n->getWeightValueAt(i) << "\n";
+	}
+
+	float sum = 0;
+	for (int i = 0; i < 10; i++)
+	{
+		sum = (float) sum + n->getWeightValueAt(i);
+	}
+	n->setNodeValue(sum);
+	std::cout << "\n\n" << (float)n->getNodeValue() << "\n";
+
+	n->setNode(0, 0.222);
+	std::cout << (float)n->getNode(0) << "\n";
+
 	
-	/*NeuralNetwork* nn = new NeuralNetwork();
+	
+	NeuralNetwork* nn = new NeuralNetwork();
 	nn->AddLinearLayer(11);
 	nn->AddLinearLayer(11);
-	nn->AddLinearLayer(12);*/
-	//srand((unsigned)time(NULL));
-	//std::cout << (float)rand() / 32767 << "\n";
+	nn->AddLinearLayer(12);
+	srand((unsigned)time(NULL));
+	std::cout << (float)rand() / 32767 << "\n";*/
 
 	system("pause");
 }

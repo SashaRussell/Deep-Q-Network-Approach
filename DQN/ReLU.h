@@ -9,8 +9,10 @@ private:
 	float nodesBias = 0.0f;
 	bool firstLayer = false;
 
+	char* weightInitType;
+
 public:
-	ReLU(int prevNodesNumber, int curNodesNumber);
+	ReLU(int prevNodesNumber, int curNodesNumber, char* weightInitType);
 	~ReLU();
 	char* getLayerType() override;
 

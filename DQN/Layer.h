@@ -4,6 +4,9 @@ class Layer // abstract class
 {
 private:
 public:
+	Layer() {};
+	virtual ~Layer() {};
+
 	virtual char* getLayerType() = 0;
 
 	virtual float getBiasValue() = 0;

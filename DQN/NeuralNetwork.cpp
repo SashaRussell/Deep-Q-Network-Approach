@@ -3,36 +3,52 @@
 
 NeuralNetwork::NeuralNetwork()
 {
-	numLayers = 0;
+
 }
 
-void NeuralNetwork::AddLinearLayer(int size)
+bool NeuralNetwork::AddLinearLayer(int prevLayerSize, int currLayerSize, char* weightInitType)
 {
-
-	// Implimentation Required (FOR WEIGHTS)
+	if (nnSize == 0 and prevLayerSize > 0) // first layer can't have weights
+	{
+		return false;
+	}
+	nnSize++;
+	layers.push_back(new Linear(prevLayerSize, currLayerSize, weightInitType));
+	return true;
 }
 
-void NeuralNetwork::AddLeakyReLULayer()
+bool NeuralNetwork::AddLeakyReLULayer(int prevLayerSize, int currLayerSize, char* weightInitType, float koef)
 {
-	// Implimentation Required
+	if (nnSize == 0 and prevLayerSize > 0) // first layer can't have weights
+	{
+		return false;
+	}
+	nnSize++;
+	layers.push_back(new LeakyReLU(prevLayerSize, currLayerSize, weightInitType, koef));
+	return true;
 }
 
-void NeuralNetwork::AddReLULayer()
+bool NeuralNetwork::AddReLULayer(int prevLayerSize, int currLayerSize, char* weightInitType)
 {
-	// Implimentation Required
+	if (nnSize == 0 and prevLayerSize > 0) // first layer can't have weights
+	{
+		return false;
+	}
+	nnSize++;
+	layers.push_back(new ReLU(prevLayerSize, currLayerSize, weightInitType));
+	return false;
 }
 
-void NeuralNetwork::AddSigmoidLayer()
+Layer* NeuralNetwork::getLayerAt(int index)
 {
-	// Implimentation Required
+	if (index >= 0 and index < nnSize)
+	{
+		return layers[index];
+	}
+	return nullptr;
 }
-
-
 
 NeuralNetwork::~NeuralNetwork()
 {
-	numLayers = 0; // Number of Hiiden Layers
-	delete layers;// = nullptr; // State batch
-	delete weights;// = nullptr; // Hidden Layer Values
-	delete bias;// = nullptr; // Bias Values
+
 };
