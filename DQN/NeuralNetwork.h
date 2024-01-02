@@ -17,6 +17,8 @@ public:
 	bool AddLeakyReLULayer(int prevLayerSize, int currLayerSize, char* weightInitType = new char[9] {'H', 'e', 'N', 'o', 'r', 'm', 'a', 'l', '\0'}, float koef = 0.01); // same as above
 	bool AddReLULayer(int prevLayerSize, int currLayerSize, char* weightInitType = new char[9] {'H', 'e', 'N', 'o', 'r', 'm', 'a', 'l', '\0'}); // same as above
 
+	bool TransactionFF(); // Feed Forward 
+
 	Layer* getLayerAt(int index);
 
 

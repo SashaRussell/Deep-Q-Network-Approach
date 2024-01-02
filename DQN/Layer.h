@@ -19,6 +19,8 @@ public:
 	virtual Node* getNodeAt(int index) = 0;
 	virtual void setNodeAt(int index, Node* value) = 0;
 
+
+
 	virtual void executeLayerFunction() = 0; // A layer convert function (new L = alpha * old L) specific for each layer type (Linear, LeakyReLU, ReLU, Sigmoid ...)
 };
 

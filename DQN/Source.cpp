@@ -11,120 +11,36 @@ void main()
 	NeuralNetwork myNN;
 
 	myNN.AddLinearLayer(0, 5);
-	myNN.AddReLULayer(5, 5);
-	myNN.AddLeakyReLULayer(5, 5);
+	myNN.AddReLULayer(5, 6);
+	myNN.AddLinearLayer(6, 7);
+	myNN.AddLeakyReLULayer(7, 8);
+	myNN.AddLinearLayer(8, 9);
+	myNN.AddLinearLayer(9, 10);
 
-	Layer* myLayer = myNN.getLayerAt(2);
+	Layer* myLayer = myNN.getLayerAt(0);
 
-	/*myLayer->*/
-
-	Node* myNode = myLayer->getNodeAt(4);
-
-
-	if (myLayer != nullptr)
+	for (int i = 0; i < myLayer->getNodesNumber(); i++)
 	{
-
-		std::cout << "True! ";
-		myNode->setNodeValue(10);
-		std::cout << "Value = " << myNode->getNodeValue(); // checker
-
-		std::cout << "\n\n";
-	}
-	else
-	{
-		std::cout << "False!\n\n";
-	};
-
-	//////
-
-
-	/*Layer* ll = new LeakyReLU(4,8);
-	Node** nodes = ll->getNodesList();
-
-	for (int i = 0; i < ll->getNodesNumber(); i++)
-	{
-		if (i % 2 == 0)
-		{
-			nodes[i]->setNodeValue(-10);
-		}
-		else
-		{
-			nodes[i]->setNodeValue(10);
-		}
-		std::cout << (float)nodes[i]->getNodeValue() << "; ";
+		myLayer->getNodeAt(i)->setNodeValue(10);
 	}
 
+	myNN.TransactionFF(); // Feed Forward
+
+	for (int i = 1; i < 6; i++)
+	{
+		for (int j = 0; j < myNN.getLayerAt(i)->getNodesNumber(); j++)
+		{
+			std::cout << "weights in " << i << " " << j << ": ";
+			for (int m = 0; m < myNN.getLayerAt(i)->getNodeAt(j)->getTotalWeightNumber(); m++)
+			{
+				std::cout << myNN.getLayerAt(i)->getNodeAt(j)->getWeightValueAt(m) << " / ";
+			}
+
+			std::cout << "\nNode value: " << myNN.getLayerAt(i)->getNodeAt(j)->getNodeValue() << "\n\n";
+		}
+	}
 
 	std::cout << "\n\n";
-	ll->executeLayerFunction();
-	
-	
-	for (int i = 0; i < ll->getNodesNumber(); i++)
-	{
-		std::cout << (float)nodes[i]->getNodeValue() << "; ";
-	}*/
-
-
-	/*char* ch = linear->getLayerType();
-	
-	for (int i = 0; true; i++)
-	{
-		if (*(ch + i) != '\0')
-		{
-			std::cout << *(ch + i);
-		}
-		else
-		{
-			std::cout << "\n\n";
-			break;
-		}
-	}*/
-
-	/*Node** nodes = linear->getNodesList();
-
-	for (int i = 0; i < linear->getNodesNumber(); i++)
-	{
-		for (int j = 0; j < nodes[i]->getTotalWeightNumber(); j++)
-		{
-			std::cout << " (i = " << i << ", " << " j = " << j << ") = " << nodes[i]->getWeightValueAt(j) << "; ";
-		}
-
-		std::cout << "\n\n";
-	}*/
-
-	///
-
-	/*Node** ns = new Node*[10];
-	for(int )
-	int prevLayer = 10;
-	Node* n = new Node(prevLayer);
-	n->Weight_HeNormal_Init();
-	float val = ;
-	for (int i = 0; i < 10; i++)
-	{
-		n->setNodeValue(i, 0.22222);
-		std::cout << (float) n->getWeightValueAt(i) << "\n";
-	}
-
-	float sum = 0;
-	for (int i = 0; i < 10; i++)
-	{
-		sum = (float) sum + n->getWeightValueAt(i);
-	}
-	n->setNodeValue(sum);
-	std::cout << "\n\n" << (float)n->getNodeValue() << "\n";
-
-	n->setNode(0, 0.222);
-	std::cout << (float)n->getNode(0) << "\n";
-
-	
-	
-	NeuralNetwork* nn = new NeuralNetwork();
-	nn->AddLinearLayer(11);
-	nn->AddLinearLayer(11);
-	nn->AddLinearLayer(12);
-	srand((unsigned)time(NULL));
-	std::cout << (float)rand() / 32767 << "\n";*/
 
 	system("pause");
 }
