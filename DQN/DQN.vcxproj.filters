@@ -37,6 +37,9 @@
     <Filter Include="NN Structure\Layer\Layer Types\Linear">
       <UniqueIdentifier>{a530bbbb-8f05-41d7-9d36-e2371dd75e4b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="QN Structure">
+      <UniqueIdentifier>{fd85c266-e77c-4aa8-8a15-1aaf7906fa78}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp">
@@ -57,6 +60,9 @@
     <ClCompile Include="ReLU.cpp">
       <Filter>NN Structure\Layer\Layer Types\ReLU</Filter>
     </ClCompile>
+    <ClCompile Include="QNetwork.cpp">
+      <Filter>QN Structure</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Node.h">
@@ -76,6 +82,9 @@
     </ClInclude>
     <ClInclude Include="ReLU.h">
       <Filter>NN Structure\Layer\Layer Types\ReLU</Filter>
+    </ClInclude>
+    <ClInclude Include="QNetwork.h">
+      <Filter>QN Structure</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
