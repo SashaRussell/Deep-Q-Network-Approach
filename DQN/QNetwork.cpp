@@ -1,5 +1,23 @@
 #include "QNetwork.h"
 
+float QNetwork::MSELoss(Layer* currValue, Layer* targValue)
+{
+	float errorValue = 0.0f;
+
+	for (int i = 0; i < currValue->getNodesNumber(); i++)
+	{
+		float temp = targValue->getNodeAt(i)->getNodeValue() - currValue->getNodeAt(i)->getNodeValue();
+		errorValue = (float)temp * temp + errorValue;
+	}
+	errorValue = errorValue / 2;
+	return errorValue;
+}
+
+float QNetwork::Adam(float learningRate)
+{
+	return 0.0f;
+}
+
 QNetwork::QNetwork(int inputLayerSize, int hiddenLayerNumber, int hiddenLayerSize, int outputLayerSize, float learningRate)
 {
 	if ((inputLayerSize > 0) and (hiddenLayerNumber > 0) and (hiddenLayerSize > 0) and (outputLayerSize > 0) and (learningRate >= 0 and learningRate <= 1))
@@ -31,7 +49,7 @@ QNetwork::~QNetwork()
 	delete myNeuralNetwork;
 }
 
-void QNetwork::Update()
+void QNetwork::UpdateWeights(Layer* currValue, Layer* targValue)
 {
-
+	float loss = MSELoss(currValue, targValue)
 }

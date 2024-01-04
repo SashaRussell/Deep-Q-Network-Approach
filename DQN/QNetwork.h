@@ -13,10 +13,12 @@ private:
 
 	float learningRate = 0.5f;
 
+	float MSELoss(Layer* currValue, Layer* targValue);
+	float Adam(float learningRate = 0.5f);
+
 public:
-	QNetwork(int inputLayerSize, int hiddenLayerNumber, int hiddenLayerSize, int outputLayerSize, float learningRate = 0.05f);
+	QNetwork(int inputLayerSize, int hiddenLayerNumber, int hiddenLayerSize, int outputLayerSize, float learningRate = 0.001f);
 	~QNetwork();
 
-	void Update(); // need to give some value as input
+	void UpdateWeights(Layer* currValue, Layer* targValue); // need to give some value as input
 };
-
