@@ -19,6 +19,8 @@ public:
 
 	bool TransactionFF(); // Feed Forward 
 
+
+	void setInputLayer(Layer* initLayer);
 	Layer* getLayerAt(int index);
 
 

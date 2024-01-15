@@ -127,15 +127,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Adam.h" />
     <ClInclude Include="Layer.h" />
     <ClInclude Include="LeakyReLU.h" />
     <ClInclude Include="Linear.h" />
     <ClInclude Include="NeuralNetwork.h" />
     <ClInclude Include="Node.h" />
+    <ClInclude Include="Optimizer.h" />
     <ClInclude Include="QNetwork.h" />
     <ClInclude Include="ReLU.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Adam.cpp" />
     <ClCompile Include="LeakyReLU.cpp" />
     <ClCompile Include="Linear.cpp" />
     <ClCompile Include="NeuralNetwork.cpp" />

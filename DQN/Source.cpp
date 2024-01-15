@@ -1,46 +1,75 @@
 #include <iostream>
-#include "NeuralNetwork.h"
+#include "QNetwork.h"
+#include "Adam.h"
+#include <chrono>
+
+
+float loss_function(float m)
+{
+	return (float)(m * m) - 2 * m + 1;
+}
+
+float grad_function(float m)
+{
+	return (float)2 * m - 2;
+}
+
+bool check_convergence(float m1, float  m2)
+{
+	return (m1 == m2);
+}
 
 void main()
 {
+	auto start_time = std::chrono::high_resolution_clock::now();
+	Layer* current = new Linear(0,3);
+	current->getNodeAt(0)->setNodeValue(3.0f);
+	current->getNodeAt(1)->setNodeValue(1.5f);
+	current->getNodeAt(2)->setNodeValue(2.42f);
+	Layer* output = new Linear(0, 4);
+	output->getNodeAt(0)->setNodeValue(10.0f);
 
-	std::cout << "hello world!\n\n";
 
-	///
+	QNetwork* myQN = new QNetwork(3, 10, 5, 4);
+	myQN->Update(current, output);
 
-	NeuralNetwork myNN;
+	auto end_time = std::chrono::high_resolution_clock::now();
 
-	myNN.AddLinearLayer(0, 5);
-	myNN.AddReLULayer(5, 6);
-	myNN.AddLinearLayer(6, 7);
-	myNN.AddLeakyReLULayer(7, 8);
-	myNN.AddLinearLayer(8, 9);
-	myNN.AddLinearLayer(9, 10);
+	// Calculate the elapsed time
+	auto elapsed_time = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time); 
 
-	Layer* myLayer = myNN.getLayerAt(0);
+	// Output the result
+	std::cout << "Time taken: " << elapsed_time.count() << " microseconds" << std::endl; // currently 0.00137 sec which is good
 
-	for (int i = 0; i < myLayer->getNodesNumber(); i++)
-	{
-		myLayer->getNodeAt(i)->setNodeValue(10);
-	}
 
-	myNN.TransactionFF(); // Feed Forward
 
-	for (int i = 1; i < 6; i++)
-	{
-		for (int j = 0; j < myNN.getLayerAt(i)->getNodesNumber(); j++)
-		{
-			std::cout << "weights in " << i << " " << j << ": ";
-			for (int m = 0; m < myNN.getLayerAt(i)->getNodeAt(j)->getTotalWeightNumber(); m++)
-			{
-				std::cout << myNN.getLayerAt(i)->getNodeAt(j)->getWeightValueAt(m) << " / ";
-			}
+	//std::cout << "hello world!\n\n";
 
-			std::cout << "\nNode value: " << myNN.getLayerAt(i)->getNodeAt(j)->getNodeValue() << "\n\n";
-		}
-	}
+	//Optimizer* myAdam = new Adam();
 
-	std::cout << "\n\n";
+	//float weight = 0.0f;
+	//bool converge = false;
+	//int t = 0;
+
+	//while (converge != true)
+	//{
+	//	t++;
+	//	float dWeight = grad_function(weight);
+	//	float oldWeight = weight;
+	//	weight = myAdam->Update(weight, dWeight);
+	//	if (check_convergence(weight, oldWeight))
+	//	{
+	//		std::cout << "At iteration " << t << " converegerd, value = " << (float)weight << "\n";
+	//		converge = true;
+	//	}
+	//	else
+	//	{
+	//		std::cout << "Iteration: " << t << " and value = " << (float)weight << "\n";
+	//	}
+	//}
 
 	system("pause");
 }
+
+
+

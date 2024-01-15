@@ -1,7 +1,5 @@
-﻿  NeuralNetwork.cpp
+﻿  Source.cpp
 D:\Visual Studio Projects\DQN\DQN\LeakyReLU.h(14,8): warning C4305: инициализация: усечение из "double" в "float"
-  Source.cpp
-D:\Visual Studio Projects\DQN\DQN\LeakyReLU.h(14,8): warning C4305: инициализация: усечение из "double" в "float"
-D:\Visual Studio Projects\DQN\DQN\Source.cpp(5,1): warning C4326: возвращаемый тип "main" должен быть "int", а не "void"
-  Создание кода...
+D:\Visual Studio Projects\DQN\DQN\Adam.h(7,67): warning C4305: инициализация: усечение из "double" в "float"
+D:\Visual Studio Projects\DQN\DQN\Source.cpp(23,1): warning C4326: возвращаемый тип "main" должен быть "int", а не "void"
   DQN.vcxproj -> D:\Visual Studio Projects\DQN\x64\Debug\DQN.exe

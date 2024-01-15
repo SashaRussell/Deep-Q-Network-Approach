@@ -12,7 +12,7 @@ private:
 	char* weightInitType;
 
 public:
-	ReLU(int prevNodesNumber, int curNodesNumber, char* weightInitType);
+	ReLU(int prevNodesNumber, int curNodesNumber, char* weightInitType = new char[9] {'H', 'e', 'N', 'o', 'r', 'm', 'a', 'l', '\0'});
 	~ReLU();
 	char* getLayerType() override;
 

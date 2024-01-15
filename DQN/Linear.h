@@ -12,7 +12,7 @@ private:
 	char* weightInitType;
 
 public:
-	Linear(int prevNodesNumber, int curNodesNumber, char* weightInitType);
+	Linear(int prevNodesNumber, int curNodesNumber, char* weightInitType = new char[9] {'H', 'e', 'N', 'o', 'r', 'm', 'a', 'l', '\0'});
 	~Linear();
 	char* getLayerType() override;
 

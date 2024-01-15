@@ -63,6 +63,11 @@ bool NeuralNetwork::TransactionFF()
 	return false;
 }
 
+void NeuralNetwork::setInputLayer(Layer* initLayer)
+{
+	layers[0] = initLayer;
+}
+
 Layer* NeuralNetwork::getLayerAt(int index)
 {
 	if (index >= 0 and index < nnSize)

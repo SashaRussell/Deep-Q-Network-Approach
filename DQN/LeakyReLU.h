@@ -14,7 +14,7 @@ private:
 	float koef = 0.01;
 
 public:
-	LeakyReLU(int prevNodesNumber, int curNodesNumber, char* weightInitType, float koef);
+	LeakyReLU(int prevNodesNumber, int curNodesNumber, char* weightInitType = new char[9] {'H', 'e', 'N', 'o', 'r', 'm', 'a', 'l', '\0'}, float koef = 0.01);
 	~LeakyReLU();
 	char* getLayerType() override;
 

@@ -40,6 +40,15 @@
     <Filter Include="QN Structure">
       <UniqueIdentifier>{fd85c266-e77c-4aa8-8a15-1aaf7906fa78}</UniqueIdentifier>
     </Filter>
+    <Filter Include="QN Structure\Optimizer">
+      <UniqueIdentifier>{44341171-efce-4930-8883-4b970d8b707c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="QN Structure\Optimizer\Optimizer Types">
+      <UniqueIdentifier>{477c56ec-444e-40db-9f57-9054a2366526}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="QN Structure\Optimizer\Optimizer Types\Adam">
+      <UniqueIdentifier>{c67187cf-aa33-4571-8d5e-2742628082c4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp">
@@ -63,6 +72,9 @@
     <ClCompile Include="QNetwork.cpp">
       <Filter>QN Structure</Filter>
     </ClCompile>
+    <ClCompile Include="Adam.cpp">
+      <Filter>QN Structure\Optimizer\Optimizer Types\Adam</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Node.h">
@@ -85,6 +97,12 @@
     </ClInclude>
     <ClInclude Include="QNetwork.h">
       <Filter>QN Structure</Filter>
+    </ClInclude>
+    <ClInclude Include="Optimizer.h">
+      <Filter>QN Structure\Optimizer</Filter>
+    </ClInclude>
+    <ClInclude Include="Adam.h">
+      <Filter>QN Structure\Optimizer\Optimizer Types\Adam</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

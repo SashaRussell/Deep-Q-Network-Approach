@@ -5,11 +5,12 @@
 class Node
 {
 private:
+
 	float nodeValue = 0.0f;
 
 	float* nodeWeights = nullptr;
 
-	int weightsNumber;  // It's a pointer, bc all nodes in a layer will have same amount of Weights !!! But need to be careful when deleting 1 node in a layer
+	int weightsNumber;  // It's (P.S. "It's NOT but SHOULD BE") a pointer, bc all nodes in a layer will have same amount of Weights !!! But need to be careful when deleting 1 node in a layer
 
 	float weightsDistribution = 0.0f;
 
