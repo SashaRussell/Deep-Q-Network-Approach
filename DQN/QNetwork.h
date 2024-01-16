@@ -9,7 +9,7 @@ private:
 	NeuralNetwork* myNeuralNetwork = nullptr;
 
 	Optimizer** OptimizerList;
-	float** weightGradient;
+	float*** weightGradient;
 	float* biasGradient;
 
 	float* localErrors;

@@ -23,11 +23,11 @@ void main()
 {
 	auto start_time = std::chrono::high_resolution_clock::now();
 	Layer* current = new Linear(0,3);
-	current->getNodeAt(0)->setNodeValue(3.0f);
-	current->getNodeAt(1)->setNodeValue(1.5f);
-	current->getNodeAt(2)->setNodeValue(2.42f);
+	current->getNodeAt(0)->setNodeValue(0.5f);
+	current->getNodeAt(1)->setNodeValue(0.46f);
+	current->getNodeAt(2)->setNodeValue(0.22f);
 	Layer* output = new Linear(0, 4);
-	output->getNodeAt(0)->setNodeValue(10.0f);
+	output->getNodeAt(0)->setNodeValue(1.0f);
 
 
 	QNetwork* myQN = new QNetwork(3, 10, 5, 4);
