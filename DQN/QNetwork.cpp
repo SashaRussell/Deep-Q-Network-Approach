@@ -73,6 +73,8 @@ void QNetwork::EvaluateGradient()
 		}
 	}
 
+
+
 	//for (int i = 0; i < hiddenLayerSize; i++) // to display the gradients from from Layer (2) till the end [values intputted manually]
 	//{
 	//	for (int j = 0; j < hiddenLayerSize; j++)
@@ -86,11 +88,31 @@ void QNetwork::EvaluateGradient()
 	//	std::cout << "\n";
 	//}
 
+	biasGradient[hiddenLayerNumber] = lossTotal;
 
+	for (int i = hiddenLayerNumber - 1; i > -1; i--)
+	{
+		float temp1 = lossTotal;
+		for (int j = i; j < hiddenLayerNumber; j++)
+		{
+			float temp2 = 0.0f;
+			for (int m = 0; m < myNeuralNetwork->getLayerAt(j+1)->getNodesNumber(); m++)
+			{
+				temp2 = (float) temp2 + myNeuralNetwork->getLayerAt(j+1)->getNodeAt(m)->getNodeValue();
+			}
+			temp1 = (float)temp1 * temp2;
+		}
+		biasGradient[i] = temp1;
+	}
+
+	for (int i = 0; i < 11; i++)
+	{
+		std::cout << (float)biasGradient[i] << " ";
+	}
 
 	// Bias Gradient Evaluation
 
-
+	
 
 }
 
@@ -160,14 +182,20 @@ QNetwork::QNetwork(int inputLayerSize, int hiddenLayerNumber, int hiddenLayerSiz
 
 		// Make a list of Optimizers (Currently its just ADAM)
 
-		OptimizerList = new Optimizer * [hiddenLayerNumber + 1];
+		biasOptimizer = new Adam[hiddenLayerNumber + 1]; // bias
 
-		OptimizerList[0] = new Adam[(inputLayerSize + 1) * hiddenLayerSize];
-		for (int i = 1; i < hiddenLayerNumber; i++)
+		weightOptimizer = new Optimizer** [hiddenLayerNumber + 1];
+
+		for (int i = 0; i < hiddenLayerNumber + 1; i++)
 		{
-			OptimizerList[i] = new Adam[(hiddenLayerSize + 1) * hiddenLayerSize]; // [(hiddenLayerSize+1)] respresents the previous layer size and the bias AND [hiddenLayerSize] represents the current layer size MAKING the summ of CONNECTIONS (weights and bias) needed for optimizing
+			int temp1 = myNeuralNetwork->getLayerAt(i + 1)->getNodesNumber();
+			weightOptimizer[i] = new Optimizer* [temp1];
+			for (int j = 0; j < temp1; j++)
+			{
+				int temp2 = myNeuralNetwork->getLayerAt(i + 1)->getNodeAt(j)->getTotalWeightNumber();
+				weightOptimizer[i][j] = new Adam[temp2];
+			}
 		}
-		OptimizerList[hiddenLayerNumber] = new Adam[(hiddenLayerSize + 1) * outputLayerSize];
 	}
 }
 
@@ -186,6 +214,9 @@ void QNetwork::Update(Layer* inputValue, Layer* targOutValue)
 	// Weight back propogation evaluation (find VALUE and DVALUE through MSELoss for each weight and bias) OR we are finding the gradient value for the weight and biases
 	//
 	EvaluateGradient();
+	// AdamPass();
+	// ApplyAdamChanges();
+	
 	//
 	// Weight Adjustment based on Adam Alg. optimization with input data of VALUE and DVALUE
 }

@@ -29,7 +29,7 @@ float Adam::Update(float value, float dValue)
 	
 	timeStep = timeStep + 1;
 
-	return (float)value - learningRate * (temp_momentum_corr / (sqrt(temp_velocity_corr) + epsilon));
+	return (float)value - ((float) learningRate * ((float) temp_momentum_corr / ((float) sqrt(temp_velocity_corr) + epsilon)));
 }
 
 
