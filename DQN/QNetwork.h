@@ -8,7 +8,7 @@ private:
 
 	NeuralNetwork* myNeuralNetwork = nullptr;
 
-	Optimizer*** weightOptimizer;
+	Optimizer**** weightOptimizer;
 	Optimizer* biasOptimizer;
 
 
@@ -28,12 +28,13 @@ private:
 
 	float MSELossForBackPropogation(Layer* currValue, Layer* targValue);
 	void EvaluateGradient();
+	void AdamPass();
 
 public:
 	QNetwork(int inputLayerSize, int hiddenLayerNumber, int hiddenLayerSize, int outputLayerSize, float learningRate = 0.001f);
 	~QNetwork();
 
-
+	float CheckError();
 
 	void Update(Layer* inputValue, Layer* targOutValue); // need to give some value as input
 };

@@ -93,27 +93,62 @@ void QNetwork::EvaluateGradient()
 	for (int i = hiddenLayerNumber - 1; i > -1; i--)
 	{
 		float temp1 = lossTotal;
+		bool flagIsPrevLayerReLU = false;
 		for (int j = i; j < hiddenLayerNumber; j++)
 		{
 			float temp2 = 0.0f;
+
+			if (*myNeuralNetwork->getLayerAt(j)->getLayerType() == 'R')
+			{
+				flagIsPrevLayerReLU = true;
+			}
+			else
+			{
+				flagIsPrevLayerReLU = false;
+			}
+
 			for (int m = 0; m < myNeuralNetwork->getLayerAt(j+1)->getNodesNumber(); m++)
 			{
-				temp2 = (float) temp2 + myNeuralNetwork->getLayerAt(j+1)->getNodeAt(m)->getNodeValue();
+				if (((flagIsPrevLayerReLU) and (myNeuralNetwork->getLayerAt(j)->getNodeAt(m)->getNodeValue() > 0)) or (!flagIsPrevLayerReLU))
+				{
+					temp2 = (float)temp2 + myNeuralNetwork->getLayerAt(j + 1)->getNodeAt(m)->getNodeValue();
+				}
 			}
 			temp1 = (float)temp1 * temp2;
 		}
 		biasGradient[i] = temp1;
 	}
 
-	for (int i = 0; i < 11; i++)
+	/*for (int i = 0; i < 11; i++)
 	{
 		std::cout << (float)biasGradient[i] << " ";
-	}
+	}*/
 
 	// Bias Gradient Evaluation
 
 	
 
+}
+
+void QNetwork::AdamPass()
+{
+	for (int i = 0; i < hiddenLayerNumber; i++)
+	{
+		float temp = biasOptimizer->Update(myNeuralNetwork->getLayerAt(i + 1)->getBiasValue(), biasGradient[i]);
+		myNeuralNetwork->getLayerAt(i + 1)->setBiasValue(temp);
+	}
+
+	for (int i = 0; i < hiddenLayerNumber + 1; i++)
+	{
+		for (int j = 0; j < myNeuralNetwork->getLayerAt(i + 1)->getNodesNumber(); j++)
+		{
+			for (int m = 0; m < myNeuralNetwork->getLayerAt(i + 1)->getNodeAt(j)->getTotalWeightNumber(); m++)
+			{
+				float temp = weightOptimizer[i][j][m]->Update(myNeuralNetwork->getLayerAt(i + 1)->getNodeAt(j)->getWeightValueAt(m), weightGradient[i][j][m]);
+				myNeuralNetwork->getLayerAt(i + 1)->getNodeAt(j)->setNodeValue(temp);
+			}
+		}
+	}
 }
 
 QNetwork::QNetwork(int inputLayerSize, int hiddenLayerNumber, int hiddenLayerSize, int outputLayerSize, float learningRate)
@@ -184,16 +219,20 @@ QNetwork::QNetwork(int inputLayerSize, int hiddenLayerNumber, int hiddenLayerSiz
 
 		biasOptimizer = new Adam[hiddenLayerNumber + 1]; // bias
 
-		weightOptimizer = new Optimizer** [hiddenLayerNumber + 1];
+		weightOptimizer = new Optimizer*** [hiddenLayerNumber + 1];
 
 		for (int i = 0; i < hiddenLayerNumber + 1; i++)
 		{
 			int temp1 = myNeuralNetwork->getLayerAt(i + 1)->getNodesNumber();
-			weightOptimizer[i] = new Optimizer* [temp1];
+			weightOptimizer[i] = new Optimizer** [temp1];
 			for (int j = 0; j < temp1; j++)
 			{
 				int temp2 = myNeuralNetwork->getLayerAt(i + 1)->getNodeAt(j)->getTotalWeightNumber();
-				weightOptimizer[i][j] = new Adam[temp2];
+				weightOptimizer[i][j] = new Optimizer*[temp2];
+				for (int m = 0; m < temp2; m++)
+				{
+					weightOptimizer[i][j][m] = new Adam();
+				}
 			}
 		}
 	}
@@ -202,6 +241,11 @@ QNetwork::QNetwork(int inputLayerSize, int hiddenLayerNumber, int hiddenLayerSiz
 QNetwork::~QNetwork()
 {
 	delete myNeuralNetwork;
+}
+
+float QNetwork::CheckError()
+{
+	return lossTotal;
 }
 
 
@@ -214,7 +258,7 @@ void QNetwork::Update(Layer* inputValue, Layer* targOutValue)
 	// Weight back propogation evaluation (find VALUE and DVALUE through MSELoss for each weight and bias) OR we are finding the gradient value for the weight and biases
 	//
 	EvaluateGradient();
-	// AdamPass();
+	AdamPass();
 	// ApplyAdamChanges();
 	
 	//
