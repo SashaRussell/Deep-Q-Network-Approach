@@ -9,9 +9,10 @@ float QNetwork::MSELossForBackPropogation(Layer* currValue, Layer* targValue)
 	{
 		float temp = (float)currValue->getNodeAt(i)->getNodeValue() - targValue->getNodeAt(i)->getNodeValue();
 		localErrors[i] = (float)temp / currValue->getNodesNumber();
+		temp = (float)temp * temp;
 		errorValue = (float)temp + errorValue;
 	}
-	errorValue = (float)errorValue / currValue->getNodesNumber();
+	//errorValue = (float)errorValue / currValue->getNodesNumber();
 	return errorValue;
 }
 
@@ -19,7 +20,7 @@ void QNetwork::EvaluateGradient()
 {
 	// Weights Gradient Evaluation
 
-	for (int i = 0; i < myNeuralNetwork->getLayerAt(hiddenLayerNumber + 1)->getNodesNumber(); i++) //  for last weights its different story - they have to be diveded for E_i, not Etotal.
+	for (int i = 0; i < myNeuralNetwork->getLayerAt(hiddenLayerNumber + 1)->getNodesNumber(); i++) //  for last weights its different - they have to be diveded for E_i, not Etotal.
 	{
 		for (int j = 0; j < myNeuralNetwork->getLayerAt(hiddenLayerNumber + 1)->getNodeAt(i)->getTotalWeightNumber(); j++)
 		{
@@ -27,7 +28,7 @@ void QNetwork::EvaluateGradient()
 		}
 	}
 
-	for (int i = hiddenLayerNumber; i > 0; i--) // we start at layer i and go by declining   
+	for (int i = hiddenLayerNumber; i > 0; i--) // we start at layer i (the last layer) and go by declining   
 	{
 		for (int j = 0; j < myNeuralNetwork->getLayerAt(i)->getNodesNumber(); j++) // we go through nodes of layer i
 		{
@@ -47,14 +48,14 @@ void QNetwork::EvaluateGradient()
 					for (int n = i; n <= hiddenLayerNumber; n++) // adds all the other layers infront
 					{
 						float temp2 = 0.0f;
-						if (*myNeuralNetwork->getLayerAt(n - 1)->getLayerType() == 'R')
+						if (*myNeuralNetwork->getLayerAt(n - 1/* - 1*/)->getLayerType() == 'R') // Prev layer was ReLU
 						{
 							// char* Mychar = myNeuralNetwork->getLayerAt(n - 1)->getLayerType(); //
 							flagIsPrevLayerReLU = true;
 						}
 						else
 						{
-							// char* Mychar = myNeuralNetwork->getLayerAt(n - 1)->getLayerType(); //
+							// char* Mychar = myNeuralNetwork->getLayerAt(n - 1)->getLayerType(); // We are at a non ReLU layer
 							flagIsPrevLayerReLU = false;
 						}
 						for (int k = 0; k < myNeuralNetwork->getLayerAt(n)->getNodesNumber(); k++)
@@ -72,21 +73,6 @@ void QNetwork::EvaluateGradient()
 			}
 		}
 	}
-
-
-
-	//for (int i = 0; i < hiddenLayerSize; i++) // to display the gradients from from Layer (2) till the end [values intputted manually]
-	//{
-	//	for (int j = 0; j < hiddenLayerSize; j++)
-	//	{
-	//		for (int k = 1; k < hiddenLayerNumber; k++)
-	//		{
-	//			std::cout << weightGradient[k][i][j] << " ";
-	//		}
-	//		std::cout << "\n";
-	//	}
-	//	std::cout << "\n";
-	//}
 
 	biasGradient[hiddenLayerNumber] = lossTotal;
 
@@ -107,7 +93,7 @@ void QNetwork::EvaluateGradient()
 				flagIsPrevLayerReLU = false;
 			}
 
-			for (int m = 0; m < myNeuralNetwork->getLayerAt(j+1)->getNodesNumber(); m++)
+			for (int m = 0; m < myNeuralNetwork->getLayerAt(j + 1)->getNodesNumber(); m++)
 			{
 				if (((flagIsPrevLayerReLU) and (myNeuralNetwork->getLayerAt(j)->getNodeAt(m)->getNodeValue() > 0)) or (!flagIsPrevLayerReLU))
 				{
@@ -126,8 +112,64 @@ void QNetwork::EvaluateGradient()
 
 	// Bias Gradient Evaluation
 
-	
 
+}
+
+void QNetwork::EvaluateGradientCopy()
+{
+	for (int i = 0; i < myNeuralNetwork->getLayerAt(hiddenLayerNumber + 1)->getNodesNumber(); i++) //  for last weights its different - they have to be diveded for E_i, not Etotal.
+	{
+		for (int j = 0; j < myNeuralNetwork->getLayerAt(hiddenLayerNumber + 1)->getNodeAt(i)->getTotalWeightNumber(); j++)
+		{
+			weightGradient[hiddenLayerNumber][i][j] = (float)localErrors[i] * myNeuralNetwork->getLayerAt(hiddenLayerNumber)->getNodeAt(j)->getNodeValue();
+		}
+	}
+
+	for (int i = 0; i < hiddenLayerNumber; i++)
+	{
+		for (int j = 0; j < myNeuralNetwork->getLayerAt(i + 1)->getNodesNumber(); j++)
+		{
+			for (int k = 0; k < myNeuralNetwork->getLayerAt(i + 1)->getNodeAt(j)->getTotalWeightNumber(); k++)
+			{
+				weightGradient[i][j][k] = (float)myNeuralNetwork->getLayerAt(i)->getNodeAt(k)->getNodeValue() * myNeuralNetwork->getLayerAt(i + 1)->getNodeAt(j)->getNodeValue() * BackPropogationRecursionMethod(i + 2);
+			}
+		}
+	}
+
+	biasGradient[hiddenLayerNumber] = lossTotal;
+
+
+	for (int i = 0; i < hiddenLayerNumber; i++)
+	{
+		biasGradient[i] = BackPropogationRecursionMethod(i + 1);
+	}
+	//int layerCounter = 0, nodeCounter = 0, weightCounter = 0;
+	//BackPropogationRecursionMethod(layerCounter, nodeCounter, weightCounter);
+}
+
+
+float QNetwork::BackPropogationRecursionMethod(int layerCounter)
+{
+	float sum = 0.0f;
+	if (layerCounter < hiddenLayerNumber + 1)
+	{
+		for (int i = 0; i < myNeuralNetwork->getLayerAt(layerCounter)->getNodesNumber(); i++)
+		{
+			if ((*myNeuralNetwork->getLayerAt(layerCounter - 1)->getLayerType() == 'R') and (myNeuralNetwork->getLayerAt(layerCounter)->getNodeAt(i)->getNodeValue() < 0))
+			{ 
+				return 0;
+			}
+			else
+			{
+				sum = sum + myNeuralNetwork->getLayerAt(layerCounter)->getNodeAt(i)->getNodeValue() * BackPropogationRecursionMethod(layerCounter + 1);
+			}
+		}
+	}
+	else
+	{
+		return lossTotal;
+	}
+	return sum;
 }
 
 void QNetwork::AdamPass()
@@ -187,7 +229,7 @@ QNetwork::QNetwork(int inputLayerSize, int hiddenLayerNumber, int hiddenLayerSiz
 
 		localErrors = new float[outputLayerSize];
 
-		// Make a list for storing evaluated gradient values  //  P.S. LATER Why not combinde two below if they are connected? I mean in a vector<vector<float>, vecotor<Optimizer>>???
+		// Make a list for storing evaluated gradient values  // 
 		// this only applies to ReLU connections
 
 		biasGradient = new float[hiddenLayerNumber + 1]; // bias
@@ -243,8 +285,19 @@ QNetwork::~QNetwork()
 	delete myNeuralNetwork;
 }
 
-float QNetwork::CheckError()
+float QNetwork::CheckError(Layer* targValue)
 {
+	/*float errorValue = 0.0f;
+
+	for (int i = 0; i < myNeuralNetwork->getLayerAt(hiddenLayerNumber+1)->getNodesNumber(); i++)
+	{
+		float temp = (float) targValue->getNodeAt(i)->getNodeValue() - myNeuralNetwork->getLayerAt(hiddenLayerNumber + 1)->getNodeAt(i)->getNodeValue();
+		temp = (float)temp * temp;
+		localErrors[i] = (float)temp / myNeuralNetwork->getLayerAt(hiddenLayerNumber + 1)->getNodesNumber();
+		errorValue = (float)temp + errorValue;
+	}
+	errorValue = (float)errorValue / myNeuralNetwork->getLayerAt(hiddenLayerNumber + 1)->getNodesNumber();
+	return errorValue;*/
 	return lossTotal;
 }
 
@@ -255,12 +308,34 @@ void QNetwork::Update(Layer* inputValue, Layer* targOutValue)
 	myNeuralNetwork->setInputLayer(inputValue);
 	myNeuralNetwork->TransactionFF();
 	lossTotal = MSELossForBackPropogation(myNeuralNetwork->getLayerAt(hiddenLayerNumber + 1), targOutValue);
+	EvaluateGradientCopy();
+	AdamPass();
+	
+	
+	
 	// Weight back propogation evaluation (find VALUE and DVALUE through MSELoss for each weight and bias) OR we are finding the gradient value for the weight and biases
 	//
-	EvaluateGradient();
-	AdamPass();
+	
+	
+	/*EvaluateGradient();
+	AdamPass();*/
+	//std::cout << BackPropogationRecursionMethod(1) << " it is \n";
+	
+	
+	
 	// ApplyAdamChanges();
 	
 	//
 	// Weight Adjustment based on Adam Alg. optimization with input data of VALUE and DVALUE
 }
+
+void QNetwork::UpdateBeta(Layer* inputValue, Layer* targOutValue)
+{
+
+	myNeuralNetwork->setInputLayer(inputValue);
+	myNeuralNetwork->TransactionFF();/*
+	//lossTotal = MSELossForBackPropogation(myNeuralNetwork->getLayerAt(hiddenLayerNumber + 1), targOutValue);
+	//EvaluateGradientCopy();
+	//AdamPass();*/
+}
+

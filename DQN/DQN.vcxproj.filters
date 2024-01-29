@@ -49,6 +49,9 @@
     <Filter Include="QN Structure\Optimizer\Optimizer Types\Adam">
       <UniqueIdentifier>{c67187cf-aa33-4571-8d5e-2742628082c4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="AgentDQN">
+      <UniqueIdentifier>{bd3c8659-2a22-4162-a8f0-5bc447685944}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp">
@@ -74,6 +77,9 @@
     </ClCompile>
     <ClCompile Include="Adam.cpp">
       <Filter>QN Structure\Optimizer\Optimizer Types\Adam</Filter>
+    </ClCompile>
+    <ClCompile Include="AgentDQN.cpp">
+      <Filter>AgentDQN</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -103,6 +109,9 @@
     </ClInclude>
     <ClInclude Include="Adam.h">
       <Filter>QN Structure\Optimizer\Optimizer Types\Adam</Filter>
+    </ClInclude>
+    <ClInclude Include="AgentDQN.h">
+      <Filter>AgentDQN</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

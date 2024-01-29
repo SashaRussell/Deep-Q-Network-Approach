@@ -128,6 +128,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Adam.h" />
+    <ClInclude Include="AgentDQN.h" />
     <ClInclude Include="Layer.h" />
     <ClInclude Include="LeakyReLU.h" />
     <ClInclude Include="Linear.h" />
@@ -139,6 +140,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Adam.cpp" />
+    <ClCompile Include="AgentDQN.cpp" />
     <ClCompile Include="LeakyReLU.cpp" />
     <ClCompile Include="Linear.cpp" />
     <ClCompile Include="NeuralNetwork.cpp" />
