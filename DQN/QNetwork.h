@@ -9,7 +9,7 @@ private:
 	NeuralNetwork* myNeuralNetwork = nullptr;
 
 	Optimizer**** weightOptimizer;
-	Optimizer* biasOptimizer;
+	Optimizer** biasOptimizer;
 
 	float*** weightGradient;
 	float* biasGradient;
@@ -18,24 +18,33 @@ private:
 	int hiddenLayerNumber = 0;
 	int hiddenLayerSize = 0;
 	int outputLayerSize = 0;
-
 	int nnLayerSize = 0;
 
 	float lossTotal = 0.0f;
-	float* localErrors = nullptr;
+	float difLossTotal = 0.0f;
+	float* localDifErrors = nullptr;
 
 	float learningRate = 0.001f;
 
-	/*float MSELossForBackPropogation(Layer* currValue, Layer* targValue);
-	void EvaluateGradient();
-	void EvaluateGradientCopy();
-	float BackPropogationRecursionMethod(int layerCounter);
-	void AdamPass();*/
+	float MSELoss(Layer* targValue);
+	float MSEDifLoss(Layer* targValue);
+
+	void EvaluateWeightGradient();
+	void EvaluateBiasGradient();
+
 
 public:
 
-	QNetwork(int inputLayerSize, int hiddenLayerNumber, int hiddenLayerSize, int outputLayerSize, float learningRate = 0.1f);
+	float GradientRecursionMethod(int layer, int node);
+	void DisplayNeuralNetwork();
+
+	void Update(Layer* inputValue, Layer* targOutValue);
+	float GetLossTotal();
+
+	QNetwork(int inputLayerSize, int hiddenLayerNumber, int hiddenLayerSize, int outputLayerSize, float learningRate = 0.001f);
 	~QNetwork();
+
+	
 
 	/*float CheckError(Layer* targValue);*/
 
