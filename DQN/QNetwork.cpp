@@ -121,28 +121,67 @@ float QNetwork::MSEDifLoss(Layer* targValue)
 void QNetwork::EvaluateWeightGradient()
 {
 	// float*** weightGradient
-	for (int i = 0; i < nnLayerSize - 1; i++)
-	{
-		for (int j = 0; j < myNeuralNetwork->getLayerAt(i + 1)->getNodesNumber(); j++)
+
+	Layer* currentLayer;
+	Layer* nextLayer;
+	int currentNodesNumber = 0;
+	int nextNodesNumber = 0;
+	char* nextLayerType;
+	float NodeValue = 0.0f;
+
+
+	for (int i = 0; i < nnLayerSize - 1; ++i) {
+		currentLayer = myNeuralNetwork->getLayerAt(i);
+		nextLayer = myNeuralNetwork->getLayerAt(i + 1);
+
+		currentNodesNumber = currentLayer->getNodesNumber();
+		nextNodesNumber = nextLayer->getNodesNumber();
+
+		nextLayerType = nextLayer->getLayerType();
+
+		for (int j = 0; j < nextNodesNumber; j++)
 		{
-			for (int k = 0; k < myNeuralNetwork->getLayerAt(i + 1)->getNodeAt(j)->getTotalWeightNumber(); k++)
+			for (int k = 0; k < currentNodesNumber; k++)
 			{
-				if ((*myNeuralNetwork->getLayerAt(i + 1)->getLayerType() == 'R') and (myNeuralNetwork->getLayerAt(i)->getNodeAt(k)->getNodeValue() < 0))
+				NodeValue = myNeuralNetwork->getLayerAt(i)->getNodeAt(k)->getNodeValue();
+				if ((*nextLayerType == 'R') and (NodeValue < 0))
 				{
 					weightGradient[i][j][k] = 0.0f;
 				}
 				else
 				{
-					weightGradient[i][j][k] = myNeuralNetwork->getLayerAt(i)->getNodeAt(k)->getNodeValue() * GradientRecursionMethod(i + 1, j);
+					weightGradient[i][j][k] = NodeValue * GradientRecursionMethodTBB(i + 1, j);
 				}
 			}
 		}
 	}
 }
 
+
 void QNetwork::EvaluateBiasGradient()
 {
 	// float* biasGradient
+}
+
+float QNetwork::GradientRecursionMethodTBB(int layer, int node)
+{
+	float sum = 0.0f;
+	if (layer >= nnLayerSize - 1)
+	{
+		//std::cout << "Layer " << layer << " and Node: " << node << "\n";
+		//std::cout << "Hit the end\n";
+		return localDifErrors[node];
+	}
+	//std::cout << "Layer " << layer << " and Node: " << node << "\n";
+
+	tbb::parallel_for(tbb::blocked_range<int>(0, myNeuralNetwork->getLayerAt(layer + 1)->getNodesNumber()),
+		[&](const tbb::blocked_range<int>& r) {
+			for (int i = r.begin(); i < r.end(); ++i) {
+				float temp = GradientRecursionMethod(layer + 1, i);
+				sum += myNeuralNetwork->getLayerAt(layer + 1)->getNodeAt(i)->getWeightValueAt(node) * temp;
+			}
+		});
+	return sum;
 }
 
 float QNetwork::GradientRecursionMethod(int layer, int node)
@@ -150,32 +189,19 @@ float QNetwork::GradientRecursionMethod(int layer, int node)
 	float sum = 0.0f;
 	if (layer >= nnLayerSize - 1)
 	{
-		std::cout << "Layer " << layer << " and Node: " << node << "\n";
-		std::cout << "Hit the end\n";
 		return localDifErrors[node];
 	}
-	else
+
+	for (int i = 0; i < myNeuralNetwork->getLayerAt(layer + 1)->getNodesNumber(); i++)
 	{
-		std::cout << "Layer " << layer << " and Node: " << node << "\n";
-		
-		for (int i = 0; i < myNeuralNetwork->getLayerAt(layer + 1)->getNodesNumber(); i++)
-		{
-			float temp = GradientRecursionMethod(layer + 1, i); 
-			sum = sum + myNeuralNetwork->getLayerAt(layer + 1)->getNodeAt(i)->getWeightValueAt(node) * temp;
-			std::cout << "Summed\n\n";
-		}
-		return sum;
+		float temp = GradientRecursionMethod(layer + 1, i);
+		sum = sum + myNeuralNetwork->getLayerAt(layer + 1)->getNodeAt(i)->getWeightValueAt(node) * temp;
 	}
+	return sum;
 }
 
 void QNetwork::DisplayNeuralNetwork()
 {
-	for (int i = 0; i < myNeuralNetwork->getLayerAt(outputLayerSize - 1)->getNodesNumber(); i++)
-	{
-		localDifErrors[i] = 1000000;
-		
-	}
-
 	for (int i = 0; i < nnLayerSize; i++)
 	{
 		std::cout << "Layer " << i << "\n";
@@ -200,7 +226,7 @@ void QNetwork::Update(Layer* inputValue, Layer* targOutValue)
 	difLossTotal = MSEDifLoss(targOutValue);
 
 	EvaluateWeightGradient();
-	EvaluateBiasGradient();
+	//EvaluateBiasGradient();
 
 	//weightGradient = nullptr;
 	//biasGradient = nullptr;	

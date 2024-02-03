@@ -2,6 +2,7 @@
 
 #include "NeuralNetwork.h"
 #include "Adam.h"
+#include <tbb/tbb.h>
 
 class QNetwork
 {
@@ -29,13 +30,14 @@ private:
 	float MSELoss(Layer* targValue);
 	float MSEDifLoss(Layer* targValue);
 
+	void EvaluateBiasGradient(); 
 	void EvaluateWeightGradient();
-	void EvaluateBiasGradient();
 
+	float GradientRecursionMethod(int layer, int node);
+	float GradientRecursionMethodTBB(int layer, int node);
 
 public:
 
-	float GradientRecursionMethod(int layer, int node);
 	void DisplayNeuralNetwork();
 
 	void Update(Layer* inputValue, Layer* targOutValue);

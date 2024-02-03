@@ -3,6 +3,7 @@
 #include "Adam.h"
 #include <chrono>
 #include <thread>
+#include <random>
 
 #include <fstream>
 #include <vector>
@@ -26,13 +27,62 @@ bool check_convergence(float m1, float  m2)
 
 
 void main()
-{
-	QNetwork* myQN = new QNetwork(1,32,32,2);
-	//myQN->DisplayNeuralNetwork();
-	float temp = 0;
-	temp = myQN->GradientRecursionMethod(25, 0);
+{	
+	float myArray[100][100];
 
-	std::cout << "Rec: " << temp << "\n";
+	float* arrayPointer = &myArray[0][0];
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	// Define a distribution for float values in a certain range
+	std::uniform_real_distribution<float> dis(0.0f, 1.0f);
+
+	for (int i = 0; i < 100; ++i) {
+		for (int j = 0; j < 100; ++j) {
+			myArray[i][j] = dis(gen);
+		}
+	}
+
+	auto start_time = std::chrono::high_resolution_clock::now();
+	for (int i = 0; i < 100; i++)
+	{
+		for (int j = 0; j < 100; j++)
+		{
+			float value = *(arrayPointer + i * 10 + j) + (*(arrayPointer + i * 10 + j) * *(arrayPointer + i * 10 + j));
+		}
+	}
+	auto end_time = std::chrono::high_resolution_clock::now();
+	auto elapsed_time = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time);
+	std::cout << "Elapsed pointer time: " << elapsed_time.count() << " microseconds." << std::endl;
+
+	start_time = std::chrono::high_resolution_clock::now();
+	for (int i = 0; i < 100; i++)
+	{
+		for (int j = 0; j < 100; j++)
+		{
+			float value = myArray[i][j] + (myArray[i][j] * myArray[i][j]);
+		}
+	}
+	end_time = std::chrono::high_resolution_clock::now();
+	elapsed_time = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time);
+	std::cout << "Elapsed array time: " << elapsed_time.count() << " microseconds." << std::endl;
+
+	Layer* c = new Linear(0,1);
+	c->getNodeAt(0)->setNodeValue(1000);
+	Layer* t = new Linear(0, 1);
+	t->getNodeAt(0)->setNodeValue(1000);
+
+	QNetwork* myQN1 = new QNetwork(1, 8, 8, 1);
+	//myQN->DisplayNeuralNetwork();
+	//myQN1->Update(c, t);
+	//float temp = 0;
+
+	start_time = std::chrono::high_resolution_clock::now();
+	myQN1->Update(c, t);
+	end_time = std::chrono::high_resolution_clock::now();
+	elapsed_time = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time);
+	std::cout << "Elapsed time: " << elapsed_time.count() << " microseconds." << std::endl;
+
+	//std::cout << "Rec: " << temp << "\n";
 
 	system("pause");
 }
