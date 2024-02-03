@@ -2,7 +2,6 @@
 
 #include "NeuralNetwork.h"
 #include "Adam.h"
-#include <tbb/tbb.h>
 
 class QNetwork
 {

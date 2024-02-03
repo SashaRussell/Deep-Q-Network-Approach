@@ -149,19 +149,6 @@
     <ClCompile Include="ReLU.cpp" />
     <ClCompile Include="Source.cpp" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <ImportGroup Label="ExtensionTargets">
-    <Import Project="..\packages\inteltbb.redist.win.2021.11.0.49514\build\native\inteltbb.redist.win.targets" Condition="Exists('..\packages\inteltbb.redist.win.2021.11.0.49514\build\native\inteltbb.redist.win.targets')" />
-    <Import Project="..\packages\inteltbb.devel.win.2021.11.0.49514\build\native\inteltbb.devel.win.targets" Condition="Exists('..\packages\inteltbb.devel.win.2021.11.0.49514\build\native\inteltbb.devel.win.targets')" />
-  </ImportGroup>
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>Данный проект ссылается на пакеты NuGet, отсутствующие на этом компьютере. Используйте восстановление пакетов NuGet, чтобы скачать их.  Дополнительную информацию см. по адресу: http://go.microsoft.com/fwlink/?LinkID=322105. Отсутствует следующий файл: {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\packages\inteltbb.redist.win.2021.11.0.49514\build\native\inteltbb.redist.win.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\inteltbb.redist.win.2021.11.0.49514\build\native\inteltbb.redist.win.targets'))" />
-    <Error Condition="!Exists('..\packages\inteltbb.devel.win.2021.11.0.49514\build\native\inteltbb.devel.win.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\inteltbb.devel.win.2021.11.0.49514\build\native\inteltbb.devel.win.targets'))" />
-  </Target>
+  <ImportGroup Label="ExtensionTargets" />
 </Project>

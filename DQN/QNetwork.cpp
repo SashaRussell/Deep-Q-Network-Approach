@@ -174,13 +174,11 @@ float QNetwork::GradientRecursionMethodTBB(int layer, int node)
 	}
 	//std::cout << "Layer " << layer << " and Node: " << node << "\n";
 
-	tbb::parallel_for(tbb::blocked_range<int>(0, myNeuralNetwork->getLayerAt(layer + 1)->getNodesNumber()),
-		[&](const tbb::blocked_range<int>& r) {
-			for (int i = r.begin(); i < r.end(); ++i) {
-				float temp = GradientRecursionMethod(layer + 1, i);
-				sum += myNeuralNetwork->getLayerAt(layer + 1)->getNodeAt(i)->getWeightValueAt(node) * temp;
-			}
-		});
+	for (int i = 0; myNeuralNetwork->getLayerAt(layer + 1)->getNodesNumber(); i++) {
+		float temp = GradientRecursionMethod(layer + 1, i);
+		sum += myNeuralNetwork->getLayerAt(layer + 1)->getNodeAt(i)->getWeightValueAt(node) * temp;
+	}
+
 	return sum;
 }
 
