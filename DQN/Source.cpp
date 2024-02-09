@@ -28,7 +28,10 @@ bool check_convergence(float m1, float  m2)
 
 void main()
 {	
-	float myArray[100][100];
+	const int size = 100;
+	float myArray[size][size];
+	float** myLnkArray = new float* [size];
+
 
 	float* arrayPointer = &myArray[0][0];
 	std::random_device rd;
@@ -36,16 +39,22 @@ void main()
 	// Define a distribution for float values in a certain range
 	std::uniform_real_distribution<float> dis(0.0f, 1.0f);
 
-	for (int i = 0; i < 100; ++i) {
-		for (int j = 0; j < 100; ++j) {
+	for (int i = 0; i < size; ++i) {
+		for (int j = 0; j < size; ++j) {
 			myArray[i][j] = dis(gen);
+		}
+	}
+	for (int i = 0; i < size; ++i) {
+		myLnkArray[i] = new float[size];
+		for (int j = 0; j < size; ++j) {
+			myLnkArray[i][j] = dis(gen);
 		}
 	}
 
 	auto start_time = std::chrono::high_resolution_clock::now();
-	for (int i = 0; i < 100; i++)
+	for (int i = 0; i < size; i++)
 	{
-		for (int j = 0; j < 100; j++)
+		for (int j = 0; j < size; j++)
 		{
 			float value = *(arrayPointer + i * 10 + j) + (*(arrayPointer + i * 10 + j) * *(arrayPointer + i * 10 + j));
 		}
@@ -55,9 +64,9 @@ void main()
 	std::cout << "Elapsed pointer time: " << elapsed_time.count() << " microseconds." << std::endl;
 
 	start_time = std::chrono::high_resolution_clock::now();
-	for (int i = 0; i < 100; i++)
+	for (int i = 0; i < size; i++)
 	{
-		for (int j = 0; j < 100; j++)
+		for (int j = 0; j < size; j++)
 		{
 			float value = myArray[i][j] + (myArray[i][j] * myArray[i][j]);
 		}
@@ -66,21 +75,33 @@ void main()
 	elapsed_time = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time);
 	std::cout << "Elapsed array time: " << elapsed_time.count() << " microseconds." << std::endl;
 
-	Layer* c = new Linear(0,1);
-	c->getNodeAt(0)->setNodeValue(1000);
-	Layer* t = new Linear(0, 1);
-	t->getNodeAt(0)->setNodeValue(1000);
-
-	QNetwork* myQN1 = new QNetwork(1, 8, 8, 1);
-	//myQN->DisplayNeuralNetwork();
-	//myQN1->Update(c, t);
-	//float temp = 0;
-
 	start_time = std::chrono::high_resolution_clock::now();
-	myQN1->Update(c, t);
+	for (int i = 0; i < size; i++)
+	{
+		for (int j = 0; j < size; j++)
+		{
+			float value = myLnkArray[i][j] + (myLnkArray[i][j] * myLnkArray[i][j]);
+		}
+	}
 	end_time = std::chrono::high_resolution_clock::now();
 	elapsed_time = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time);
-	std::cout << "Elapsed time: " << elapsed_time.count() << " microseconds." << std::endl;
+	std::cout << "Elapsed lk arr time: " << elapsed_time.count() << " microseconds." << std::endl;
+
+	//Layer* c = new Linear(0,1);
+	//c->getNodeAt(0)->setNodeValue(1000);
+	//Layer* t = new Linear(0, 1);
+	//t->getNodeAt(0)->setNodeValue(1000);
+
+	//QNetwork* myQN1 = new QNetwork(1, 8, 8, 1);
+	////myQN->DisplayNeuralNetwork();
+	////myQN1->Update(c, t);
+	////float temp = 0;
+
+	//start_time = std::chrono::high_resolution_clock::now();
+	//myQN1->Update(c, t);
+	//end_time = std::chrono::high_resolution_clock::now();
+	//elapsed_time = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time);
+	//std::cout << "Elapsed time: " << elapsed_time.count() << " microseconds." << std::endl;
 
 	//std::cout << "Rec: " << temp << "\n";
 

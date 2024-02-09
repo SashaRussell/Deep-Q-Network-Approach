@@ -8,7 +8,13 @@ class NeuralNetwork
 {
 private:
 	int nnSize = 0;
-	std::vector <Layer*> layers;
+	//std::vector <Layer*> layers;
+	float** myNeuralNetworkNodes = nullptr;
+	float** myNeuralNetworkWeights = nullptr;
+	float* myNeuralNetworkBias = nullptr;
+
+	char* myLayerType = nullptr;
+
 public:
 	NeuralNetwork();
 	~NeuralNetwork();
