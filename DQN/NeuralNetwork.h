@@ -3,6 +3,7 @@
 #include "ReLU.h"
 #include "LeakyReLU.h"
 
+#include <random>
 #include <vector>
 class NeuralNetwork
 {
@@ -13,10 +14,12 @@ private:
 	float** myNeuralNetworkWeights = nullptr;
 	float* myNeuralNetworkBias = nullptr;
 
-	char* myLayerType = nullptr;
+	char* myLayerType = nullptr; // "L" - Linear, "R" - ReLU
+
+	std::random_device rd;
 
 public:
-	NeuralNetwork();
+	NeuralNetwork(int inputLayerSize, int hiddenLayerNumber, int hiddenLayerSize, int outputLayerSize, float learningRate);
 	~NeuralNetwork();
 	
 	bool AddLinearLayer(int prevLayerSize, int currLayerSize, char* weightInitType = new char[9] {'H', 'e', 'N', 'o', 'r', 'm', 'a', 'l', '\0'}); // returns 1 on success, 0 - fail, He Normal Weight Init by default
