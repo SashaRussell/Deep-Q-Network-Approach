@@ -68,12 +68,15 @@ NeuralNetwork::NeuralNetwork(int inputLayerSize, int hiddenLayerNumber, int hidd
 		}
 	}
 	{ /// Weight Init
-		std::random_device rd; // for Init-ing random HeNormal Weights
-		std::mt19937 gen(rd());
+
+		//std::random_device rd; // for Init-ing random HeNormal Weights
+		//std::mt19937 gen(rd());
+
+		std::mt19937 gen(42);
 
 		myNeuralNetworkWeights = new float* [nnSize];
 		// Input Layer
-		
+
 		myNeuralNetworkWeights[0] = nullptr;
 		myNeuralNetworkWeights[1] = HeNormal_Init(inputLayerSize, hiddenLayerSize, gen);
 		for (int i = 2; i < nnSize - 1; i++)
@@ -86,7 +89,7 @@ NeuralNetwork::NeuralNetwork(int inputLayerSize, int hiddenLayerNumber, int hidd
 		myLayerType = new char[nnSize];
 		for (int i = 0; i < nnSize; i++)
 		{
-			if ((i < 2) or (i >= nnSize - 2))
+			if ((i < 2) or (i >= hiddenLayerNumber))
 			{
 				myLayerType[i] = 'L';
 			}
@@ -112,10 +115,15 @@ NeuralNetwork::NeuralNetwork(int inputLayerSize, int hiddenLayerNumber, int hidd
 	}
 }
 
-bool NeuralNetwork::TransactionFF()
+bool NeuralNetwork::TransactionFF(float* InputLayer)
 {
 	if (nnSize > 3)
 	{
+		for (int i = 0; i < inputLayerSize; i++)
+		{
+			myNeuralNetworkNodes[0][i] = InputLayer[i];
+		}
+
 		int lastLayerIndex = nnSize - 1;
 		// Input layers case
 		float summ = 0.0f;
@@ -141,7 +149,7 @@ bool NeuralNetwork::TransactionFF()
 				int scale = j * hiddenLayerSize;
 				for (int k = 0; k < hiddenLayerSize; k++)
 				{
-					summ = summ + static_cast<float>(myNeuralNetworkWeights[i][k + scale] * myNeuralNetworkNodes[i-1][k]);
+					summ = summ + static_cast<float>(myNeuralNetworkWeights[i][k + scale] * myNeuralNetworkNodes[i - 1][k]);
 					//std::cout << "\nIm multiplying " << (float)myNeuralNetworkWeights[i][k + scale] << " to " << (float)myNeuralNetworkNodes[i - 1][k] << "\n";
 				}
 				summ = summ + myNeuralNetworkBias[i];
@@ -180,7 +188,7 @@ float* NeuralNetwork::LocalErrorMSE(float* targetOutput)
 	int temp = nnSize - 1;
 	for (int i = 0; i < outputLayerSize; i++)
 	{
-		localError[i] = static_cast<float>(2 * (targetOutput[i] - myNeuralNetworkNodes[temp][i]) / outputLayerSize);
+		localError[i] = static_cast<float>( - (2 * (targetOutput[i] - myNeuralNetworkNodes[temp][i]) / outputLayerSize));
 	}
 
 	return localError;
@@ -192,30 +200,127 @@ bool NeuralNetwork::TransactionBP(float* targetOutput) // PRINCIPLE :: TO SHORTE
 {
 
 	localError = LocalErrorMSE(targetOutput);
-	
-	NullNodesAt();
+
+	//NullNodesAt();
 
 	int lastLayerIndex = nnSize - 1;
 	for (int i = 0; i < outputLayerSize; i++) // WE START OUR OPERATION FROM OUTPUT NODES, SO LETS SET THEM TO ERROR VALUE 
 	{
-		myNeuralNetworkNodes[lastLayerIndex][i] = localError[i];
+		myNeuralNetworkNodes[lastLayerIndex][i] = (float)learningRate * localError[i];
 	}
 
 	// output case
 	float sum = 0.0f;
-	float* tempLayer = myNeuralNetworkNodes[hiddenLayerNumber];
+
 	for (int i = 0; i < hiddenLayerSize; i++)
 	{
 		for (int j = 0; j < outputLayerSize; j++)
 		{
-			int scale = j * hiddenLayerNumber;
+			int scale = j * hiddenLayerSize;
 			sum += static_cast<float>(myNeuralNetworkNodes[lastLayerIndex][j] * myNeuralNetworkWeights[lastLayerIndex][i + scale]);
+			//std::cout << "this " << myNeuralNetworkNodes[lastLayerIndex][j] << " multiply by " << myNeuralNetworkWeights[lastLayerIndex][i + scale] << " and summ " << sum << "\n";
+			if (myNeuralNetworkWeights[lastLayerIndex][i + scale] > 0.0000001 or myNeuralNetworkWeights[lastLayerIndex][i + scale] < -0.0000001)
+			{
+				myNeuralNetworkWeights[lastLayerIndex][i + scale] -= static_cast<float>(myNeuralNetworkNodes[hiddenLayerNumber][i] * myNeuralNetworkNodes[lastLayerIndex][j]); // gdarient update for the weights in the last layer
+			}
+			else
+			{
+				myNeuralNetworkWeights[lastLayerIndex][i + scale] = 0.0f;
+			}
+
 		}
+		//std::cout << "finish adding.the layer " << hiddenLayerNumber << " item " << i << " which was " << myNeuralNetworkNodes[hiddenLayerNumber][i] << " became " << (float)sum << "\n\n";
 		myNeuralNetworkNodes[hiddenLayerNumber][i] = (float)sum;
 		sum = 0.0f;
 	}
 
-	// for(int i = 0; i < )
+	// hidden layer case
+	bool flag = false;
+	for (int l = hiddenLayerNumber; l > 1; l--)
+	{
+		if (myLayerType[l - 1] == 'R') // 
+		{
+			for (int i = 0; i < hiddenLayerSize; i++)
+			{
+				if (myNeuralNetworkNodes[l - 1][i] > 0)
+				{
+					for (int j = 0; j < hiddenLayerSize; j++)
+					{
+						int scale = j * hiddenLayerSize;
+						sum += static_cast<float>(myNeuralNetworkNodes[l][j] * myNeuralNetworkWeights[l][i + scale]);
+						if (myNeuralNetworkWeights[l][i + scale] > 0.0000001f or myNeuralNetworkWeights[l][i + scale] < -0.0000001f)
+						{
+							myNeuralNetworkWeights[l][i + scale] -= static_cast<float>(myNeuralNetworkNodes[l - 1][i] * myNeuralNetworkNodes[l][j]); // gdarient update for the weights in the last layer
+						}
+						else
+						{
+							myNeuralNetworkWeights[l][i + scale] = 0.0f;
+						}
+
+						//std::cout << "multiply learning rate  (next node) " << myNeuralNetworkNodes[l - 1][i] << " with prev values " << myNeuralNetworkNodes[l][j] << "\n";
+					}
+				}
+				else
+				{
+					for (int j = 0; j < hiddenLayerSize; j++)
+					{
+						int scale = j * hiddenLayerSize;
+						sum += static_cast<float>(myNeuralNetworkNodes[l][j] * myNeuralNetworkWeights[l][i + scale]);
+						if (myNeuralNetworkWeights[l][i + scale] > 0.0000001f or myNeuralNetworkWeights[l][i + scale] < -0.0000001f)
+						{
+							myNeuralNetworkWeights[l][i + scale] -= static_cast<float>(myNeuralNetworkNodes[l - 1][i] * myNeuralNetworkNodes[l][j]); // gdarient update for the weights in the last layer
+						}
+						else
+						{
+							myNeuralNetworkWeights[l][i + scale] = 0.0f;
+						}
+					}
+				}
+				myNeuralNetworkNodes[l - 1][i] = (float)sum;
+				sum = 0.0f;
+			}
+		}
+		else if (myLayerType[l - 1] == 'L')
+		{
+			for (int i = 0; i < hiddenLayerSize; i++)
+			{
+				for (int j = 0; j < hiddenLayerSize; j++)
+				{
+					int scale = j * hiddenLayerSize;
+					sum += static_cast<float>(myNeuralNetworkNodes[l][j] * myNeuralNetworkWeights[l][i + scale]);
+					if (myNeuralNetworkWeights[l][i + scale] > 0.0000001f or myNeuralNetworkWeights[l][i + scale] < -0.0000001f)
+					{
+						myNeuralNetworkWeights[l][i + scale] -= static_cast<float>(myNeuralNetworkNodes[l - 1][i] * myNeuralNetworkNodes[l][j]); // gdarient update for the weights in the last layer
+					}
+					else
+					{
+						myNeuralNetworkWeights[l][i + scale] = 0.0f;
+					}
+				}
+				myNeuralNetworkNodes[l - 1][i] = (float)sum;
+					sum = 0.0f;
+			}
+		}
+	}
+
+	// input layer case
+
+	for (int i = 0; i < inputLayerSize; i++)
+	{
+		for (int j = 0; j < hiddenLayerSize; j++)
+		{
+			int scale = j * inputLayerSize + i;
+			if (myNeuralNetworkWeights[1][scale] > 0.0000001 or myNeuralNetworkWeights[1][scale] < -0.0000001f)
+			{
+				myNeuralNetworkWeights[1][scale] -= static_cast<float>(myNeuralNetworkNodes[0][i] * myNeuralNetworkNodes[1][j]); // gdarient update for the weights in the last layer
+			}
+			else
+			{
+				myNeuralNetworkWeights[1][scale] = 0.0f;
+			}
+		}
+		sum = 0.0f;
+	}
 
 	return true;
 }
@@ -223,12 +328,12 @@ bool NeuralNetwork::TransactionBP(float* targetOutput) // PRINCIPLE :: TO SHORTE
 float NeuralNetwork::evaluateWeightSum()
 {
 	// start case
-	
 
-	 
+
+
 	// inner case
-	
-	
+
+
 
 	// end case
 
@@ -240,27 +345,33 @@ float NeuralNetwork::evaluateWeightSum()
 
 void NeuralNetwork::print()
 {	// Nodes
-	
+
+	std::cout << "Layer input: ";
 	for (int i = 0; i < inputLayerSize; i++)
 	{
 		std::cout << myNeuralNetworkNodes[0][i] << " ";
 	}
 	std::cout << "\n";
+
+	
 	for (int i = 1; i <= hiddenLayerNumber; i++)
 	{
+		std::cout << "Layer " << i <<": ";
 		for (int j = 0; j < hiddenLayerSize; j++)
 		{
 			std::cout << myNeuralNetworkNodes[i][j] << " ";
 		}
 		std::cout << "\n";
 	}
+	std::cout << "Layer output: ";
 	for (int i = 0; i < outputLayerSize; i++)
 	{
-		std::cout << myNeuralNetworkNodes[nnSize-1][i] << " ";
+		std::cout << myNeuralNetworkNodes[nnSize - 1][i] << " ";
 	}
 	std::cout << "\n\n";
 
 	// Weights
+	std::cout << "Weight Layer 1: ";
 	for (int i = 0; i < inputLayerSize * hiddenLayerSize; i++)
 	{
 		std::cout << myNeuralNetworkWeights[1][i] << " ";
@@ -268,12 +379,15 @@ void NeuralNetwork::print()
 	std::cout << "\n";
 	for (int i = 2; i < nnSize - 1; i++)
 	{
+		std::cout << "Weight Layer " << i <<": ";
 		for (int j = 0; j < hiddenLayerSize * hiddenLayerSize; j++)
 		{
 			std::cout << myNeuralNetworkWeights[i][j] << " ";
 		}
 		std::cout << "\n";
 	}
+
+	std::cout << "Weight Layer " << nnSize-1 << ": ";
 	for (int i = 0; i < hiddenLayerSize * outputLayerSize; i++)
 	{
 		std::cout << myNeuralNetworkWeights[nnSize - 1][i] << " ";
@@ -282,15 +396,38 @@ void NeuralNetwork::print()
 
 };
 
+void NeuralNetwork::printl()
+{	// Nodes
+
+	std::cout << "Layer input: ";
+	for (int i = 0; i < inputLayerSize; i++)
+	{
+		std::cout << myNeuralNetworkNodes[0][i] << " ";
+	}
+	std::cout << "\n";
+
+
+	for (int i = 1; i <= hiddenLayerNumber; i++)
+	{
+		std::cout << "Layer " << i << ": ";
+		for (int j = 0; j < hiddenLayerSize; j++)
+		{
+			std::cout << myNeuralNetworkNodes[i][j] << " ";
+		}
+		std::cout << "\n";
+	}
+	std::cout << "Layer output: ";
+	for (int i = 0; i < outputLayerSize; i++)
+	{
+		std::cout << myNeuralNetworkNodes[nnSize - 1][i] << " ";
+	}
+	std::cout << "\n\n";
+
+};
+
 
 NeuralNetwork::~NeuralNetwork()
 {
 
 }
-void NeuralNetwork::SetInputLayer(float* InputLayer)
-{
-	delete[] myNeuralNetworkNodes[0];
-	myNeuralNetworkNodes[0] = InputLayer;
-};
-
 

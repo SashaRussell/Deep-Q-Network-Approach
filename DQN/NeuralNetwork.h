@@ -37,6 +37,7 @@ public:
 
 	NeuralNetwork(int inputLayerSize, int hiddenLayerNumber, int hiddenLayerSize, int outputLayerSize, float learningRate = 0.01);
 	void print();
+	void printl();
 	~NeuralNetwork();
 
 	void SetInputLayer(float* InputLayer);
@@ -49,7 +50,7 @@ public:
 	bool AddLeakyReLULayer(int prevLayerSize, int currLayerSize, char* weightInitType = new char[9] {'H', 'e', 'N', 'o', 'r', 'm', 'a', 'l', '\0'}, float koef = 0.01); // same as above
 	bool AddReLULayer(int prevLayerSize, int currLayerSize, char* weightInitType = new char[9] {'H', 'e', 'N', 'o', 'r', 'm', 'a', 'l', '\0'}); // same as above
 
-	bool TransactionFF(); // Feed Forward 
+	bool TransactionFF(float* InputLayer); // Feed Forward 
 
 	bool TransactionBP(float* targetOutput);
 
