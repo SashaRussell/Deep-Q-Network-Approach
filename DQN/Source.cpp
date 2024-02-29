@@ -12,11 +12,20 @@
 
 void main()
 {	
-	NeuralNetwork* myNN = new NeuralNetwork(2, 100, 100, 2);
-	float* temp = new float[2]{4.0f, 4.0f};
+	NeuralNetwork* myNN = new NeuralNetwork(2, 2, 2, 2);
+	float* temp = new float[2]{4.0f, 3.0f};
 	myNN->SetInputLayer(temp);
 	myNN->TransactionFF();
-	//myNN->print();
+	myNN->print();
+	//float value = myNN->evaluateWeightSum();
+	std::cout << "\n\n";
+	//myNN->LocalErrorMSE(temp);
+	//std::cout << (float)myNN->evaluateWeightSum();
+	myNN->TransactionBP(temp);
+	myNN->print();
+	std::cout << "\n\n";
+	//std::cout << (float)myNN->evaluateWeightSum();
 
 	system("pause");
+
 }

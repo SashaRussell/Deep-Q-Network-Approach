@@ -1,7 +1,7 @@
 #include "NeuralNetwork.h"
 #include "iostream"
 
-float* NeuralNetwork::HeNormal_Init(int prevNodeNumber, int currNodesNumber, std::mt19937& generator)
+float* NeuralNetwork::HeNormal_Init(int prevNodeNumber, int currNodesNumber, std::mt19937& generator) // INIT FOR WEIGHTS
 {
 	int WeightNumber = prevNodeNumber * currNodesNumber;
 	float* array = new float[WeightNumber];
@@ -13,9 +13,31 @@ float* NeuralNetwork::HeNormal_Init(int prevNodeNumber, int currNodesNumber, std
 	return array;
 }
 
+void NeuralNetwork::NullNodesAt()
+{
+	for (int j = 0; j < inputLayerSize; j++)
+	{
+		myNeuralNetworkNodes[0][j] = 0.0f;
+	}
+
+	for (int i = 1; i < nnSize - 1; i++)
+	{
+		for (int j = 0; j < hiddenLayerSize; j++)
+		{
+			myNeuralNetworkNodes[i][j] = 0.0f;
+		}
+	}
+	for (int j = 0; j < outputLayerSize; j++)
+	{
+		myNeuralNetworkNodes[nnSize - 1][j] = 0.0f;
+	}
+}
+
+
+
 NeuralNetwork::NeuralNetwork(int inputLayerSize, int hiddenLayerNumber, int hiddenLayerSize, int outputLayerSize, float learningRate)
 {
-	nnSize = hiddenLayerNumber + 2;
+	this->nnSize = hiddenLayerNumber + 2;
 	this->inputLayerSize = inputLayerSize;
 	this->hiddenLayerNumber = hiddenLayerNumber;
 	this->hiddenLayerSize = hiddenLayerSize;
@@ -103,6 +125,7 @@ bool NeuralNetwork::TransactionFF()
 			for (int k = 0; k < inputLayerSize; k++)
 			{
 				summ = summ + static_cast<float>(myNeuralNetworkWeights[1][k + scale] * myNeuralNetworkNodes[0][k]);
+				//std::cout << "\nIm multiplying " << (float)myNeuralNetworkWeights[1][k + scale] << " to " << (float)myNeuralNetworkNodes[0][k] << "\n";
 			}
 			summ = summ + myNeuralNetworkBias[1];
 			myNeuralNetworkNodes[1][j] = (float)summ;
@@ -119,6 +142,7 @@ bool NeuralNetwork::TransactionFF()
 				for (int k = 0; k < hiddenLayerSize; k++)
 				{
 					summ = summ + static_cast<float>(myNeuralNetworkWeights[i][k + scale] * myNeuralNetworkNodes[i-1][k]);
+					//std::cout << "\nIm multiplying " << (float)myNeuralNetworkWeights[i][k + scale] << " to " << (float)myNeuralNetworkNodes[i - 1][k] << "\n";
 				}
 				summ = summ + myNeuralNetworkBias[i];
 				if ((myLayerType[i] == 'R') and (summ < 0)) {
@@ -139,6 +163,7 @@ bool NeuralNetwork::TransactionFF()
 			for (int k = 0; k < hiddenLayerSize; k++)
 			{
 				summ = summ + static_cast<float>(myNeuralNetworkWeights[lastLayerIndex][k + scale] * myNeuralNetworkNodes[hiddenLayerNumber][k]);
+				//std::cout << "\nIm multiplying " << (float)myNeuralNetworkWeights[lastLayerIndex][k + scale] << " to " << (float)myNeuralNetworkNodes[hiddenLayerNumber][k] << "\n";
 			}
 			summ = summ + myNeuralNetworkBias[lastLayerIndex];
 			myNeuralNetworkNodes[lastLayerIndex][j] = (float)summ;
@@ -149,14 +174,68 @@ bool NeuralNetwork::TransactionFF()
 	return false;
 }
 
-bool NeuralNetwork::BackPropogation(float* targetOutput)
+float* NeuralNetwork::LocalErrorMSE(float* targetOutput)
 {
-	// Evaluate MSE Total.
-	// 
-	// Evaluate MSE Local.
-	// Evaluate Gradient, finding the error to the weight AND back prop. using learning rate.
+	float* localError = new float[outputLayerSize];
+	int temp = nnSize - 1;
+	for (int i = 0; i < outputLayerSize; i++)
+	{
+		localError[i] = static_cast<float>(2 * (targetOutput[i] - myNeuralNetworkNodes[temp][i]) / outputLayerSize);
+	}
+
+	return localError;
 }
 
+bool NeuralNetwork::TransactionBP(float* targetOutput) // PRINCIPLE :: TO SHORTEN COMPUTE TIME WE USE NODE STORAGE AS A TEMP VALUE OF ALL THE WEIGHT MULITPLICATION FROM THE RIGHT SIDE. THAT WAY WE DONT HAVE TO DO UNESSESARY MULTIPLICATIONS AGAIN AND AGAIN (WHEN WE ALREADY DID THEM BEFORE). 
+//IF WE WANT TO COMPUTE A GRADIENT FOR A GIVEN WEIGHT WE JUST USE THE VALUE IN THE RIGHT NODE AS IT CONTAINS ALL THE VALUES OF PREVIOUS EVALUATIONS.
+//ADDITIONALLY WE SAVE SPACE AS WE ARE JUST REUSING THE NODES ARRAY WHICH WE ALREADY MADE
+{
+
+	localError = LocalErrorMSE(targetOutput);
+	
+	NullNodesAt();
+
+	int lastLayerIndex = nnSize - 1;
+	for (int i = 0; i < outputLayerSize; i++) // WE START OUR OPERATION FROM OUTPUT NODES, SO LETS SET THEM TO ERROR VALUE 
+	{
+		myNeuralNetworkNodes[lastLayerIndex][i] = localError[i];
+	}
+
+	// output case
+	float sum = 0.0f;
+	float* tempLayer = myNeuralNetworkNodes[hiddenLayerNumber];
+	for (int i = 0; i < hiddenLayerSize; i++)
+	{
+		for (int j = 0; j < outputLayerSize; j++)
+		{
+			int scale = j * hiddenLayerNumber;
+			sum += static_cast<float>(myNeuralNetworkNodes[lastLayerIndex][j] * myNeuralNetworkWeights[lastLayerIndex][i + scale]);
+		}
+		myNeuralNetworkNodes[hiddenLayerNumber][i] = (float)sum;
+		sum = 0.0f;
+	}
+
+	// for(int i = 0; i < )
+
+	return true;
+}
+
+float NeuralNetwork::evaluateWeightSum()
+{
+	// start case
+	
+
+	 
+	// inner case
+	
+	
+
+	// end case
+
+
+
+	return 0.0f;
+}
 
 
 void NeuralNetwork::print()
@@ -212,5 +291,6 @@ void NeuralNetwork::SetInputLayer(float* InputLayer)
 {
 	delete[] myNeuralNetworkNodes[0];
 	myNeuralNetworkNodes[0] = InputLayer;
-}
-;
+};
+
+
