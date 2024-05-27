@@ -1,2 +1,2 @@
 # DQN
- Making a DQN approach from scratch
+ Freestyling a DQN approach from scratch. Currently only a Neural Network implemented
